@@ -13,6 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
@@ -28,8 +29,6 @@ public class Bosses {
     private Main plugin;
     private String bossName;
 
-    private YamlConfiguration bossesConfig;
-
     private LivingEntity boss;
     private Set<UUID> playersInRange = new HashSet<>(); // Para controlar jogadores próximos
 
@@ -42,9 +41,6 @@ public class Bosses {
         this.plugin = plugin;
         this.bossName = bossName;
 
-        File bossesFile = new File(plugin.getDataFolder(), "bosses.yml");
-        this.bossesConfig = YamlConfiguration.loadConfiguration(bossesFile);
-
         this.bossBar = Bukkit.createBossBar(
                 ChatColor.RED + bossName,
                 BarColor.RED,
@@ -54,7 +50,13 @@ public class Bosses {
         this.spawnLocation = getBossSpawnLocation();
     }
 
-    public void start() {
+    private FileConfiguration getBossesConfig()
+    {
+        return plugin.getBossesConfig();
+    }
+
+    public void start()
+    {
         // Adicionar o boss ao mapa de bosses ativos
         plugin.addBoss(bossName, this);
     }
@@ -72,7 +74,7 @@ public class Bosses {
         String path = "bosses." + bossName + ".defeated";
 
         // Obtém o valor de "defeated" da configuração
-        String defeated = bossesConfig.getString(path);
+        String defeated = getBossesConfig().getString(path);
 
         // Verifica se o valor é "YES", ignorando o case (maiusculas/minúsculas)
         return defeated.equalsIgnoreCase("YES");
@@ -87,10 +89,10 @@ public class Bosses {
         String path = "bosses." + bossName + ".spawn";
 
         // Obtém os valores de coordenadas e mundo da configuração
-        String worldName = bossesConfig.getString(path + ".world");
-        double x = bossesConfig.getDouble(path + ".x");
-        double y = bossesConfig.getDouble(path + ".y");
-        double z = bossesConfig.getDouble(path + ".z");
+        String worldName = getBossesConfig().getString(path + ".world");
+        double x = getBossesConfig().getDouble(path + ".x");
+        double y = getBossesConfig().getDouble(path + ".y");
+        double z = getBossesConfig().getDouble(path + ".z");
 
         // Verifica se o mundo é válido
         org.bukkit.World world = Bukkit.getWorld(worldName);
@@ -108,10 +110,10 @@ public class Bosses {
         String path = "bosses." + bossName + ".entrance";
 
         // Obtém os valores de coordenadas e mundo da configuração
-        String worldName = bossesConfig.getString(path + ".world");
-        double x = bossesConfig.getDouble(path + ".x");
-        double y = bossesConfig.getDouble(path + ".y");
-        double z = bossesConfig.getDouble(path + ".z");
+        String worldName = getBossesConfig().getString(path + ".world");
+        double x = getBossesConfig().getDouble(path + ".x");
+        double y = getBossesConfig().getDouble(path + ".y");
+        double z = getBossesConfig().getDouble(path + ".z");
         float yaw = (float) plugin.getConfig().getDouble("bosses." + bossName + ".entrance.yaw"); // Use o valor de yaw
 
         // Verifica se o mundo é válido
@@ -151,8 +153,8 @@ public class Bosses {
     {
         // Carrega as propriedades do boss da configuração
         String path = "bosses." + bossName;
-        String typeString = bossesConfig.getString(path + ".type");
-        double health = bossesConfig.getDouble(path + ".health");
+        String typeString = getBossesConfig().getString(path + ".type");
+        double health = getBossesConfig().getDouble(path + ".health");
         Location location = getBossSpawnLocation();
 
         if (typeString == null || location == null) {
@@ -171,6 +173,13 @@ public class Bosses {
 
         // Spawna a entidade no local especificado
         boss = (LivingEntity) location.getWorld().spawnEntity(location, type);
+
+        if(type == EntityType.SLIME)
+        {
+            Slime slime = (Slime) boss;
+            slime.setSize(3);
+        }
+
         boss.setCustomName(ChatColor.RED + bossName); // Define o nome customizado do boss
         boss.setCustomNameVisible(true); // Torna o nome visível
         boss.setMaxHealth(health); // Define a vida máxima do boss
@@ -184,10 +193,13 @@ public class Bosses {
     }
 
     public void stop() {
-        if (boss != null && !boss.isDead()) {
+        if (boss != null && !boss.isDead())
+        {
             boss.remove();
             Bukkit.getConsoleSender().sendMessage(plugin.getMessageInConfig("prefix") + plugin.getMessageInConfig("bossSuccessfullyRemoved"));
-        } else {
+        }
+        else
+        {
             Bukkit.getConsoleSender().sendMessage(plugin.getMessageInConfig("prefix") + plugin.getMessageInConfig("bossCannotBeRemoved"));
         }
     }
@@ -255,9 +267,5 @@ public class Bosses {
             // Move o boss de volta ao spawn
             boss.teleport(spawnLocation);
         }
-    }
-
-    public boolean checkBossName(String bossName) { // Nome do Boss não bate
-        return bossesConfig.contains("bosses." + bossName);
     }
 }

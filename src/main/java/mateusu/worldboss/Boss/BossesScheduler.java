@@ -19,9 +19,11 @@ public class BossesScheduler extends BukkitRunnable {
     }
 
     @Override
-    public void run() {
+    public void run()
+    {
         // Atualiza o ITEM do GUI do Boss, e o remove caso FECHADO.
-        for (String bossName : plugin.getBosses().keySet()) {
+        for (String bossName : plugin.getBosses().keySet())
+        {
             String timeStart = plugin.getBossesConfig().getString("bosses." + bossName + ".time.start", "00:00");
             String timeEnd = plugin.getBossesConfig().getString("bosses." + bossName + ".time.end", "23:59");
 

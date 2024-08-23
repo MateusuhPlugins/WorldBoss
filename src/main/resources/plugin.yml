@@ -13,7 +13,7 @@ permissions:
     description: Permissão para usar o comando do World Boss.
     default: op
 
-  wb.admin:
+  wb.*:
     description: Permissão para usar todos os comandos do World Boss.
     default: op
 

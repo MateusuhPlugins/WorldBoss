@@ -4,7 +4,7 @@ configs:
     enabled: true
 rewards:
   damage-based-rewards: #Recompensas por dano após o Boss eliminar o player, Exemplo: 100 será >=100, mas ao bater 500, não receberá a recompensa dos 100.
-    "100": "10 DIAMOND, 5 IRON_INGOT"
+    "100": "10 DIAMOND, 3 IRON_INGOT, 200 MONEY"
     "500": "20 GOLD_INGOT, 10 EMERALD"
     "1000": "10 DIAMOND, 5 IRON_INGOT, 1000 MONEY"  # Exemplo de recompensa com dinheiro
   top:
@@ -18,4 +18,4 @@ rewards:
     8: "3 STICK"
     9: "2 STICK"
     10: "1 STICK"
-  lastHit: "64 DIAMOND, 25 COAL"
+  lastHit: "2 PRISMARINE_BRICKS, 25 COAL"

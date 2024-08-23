@@ -124,7 +124,8 @@ public final class Main extends JavaPlugin {
     }
 
     // Método para recarregar a configuração dos bosses
-    public void reloadBossesConfig() {
+    public void reloadBossesConfig()
+    {
         if (bossesConfigFile == null) {
             bossesConfigFile = new File(getDataFolder(), "bosses.yml");
         }
@@ -132,7 +133,8 @@ public final class Main extends JavaPlugin {
 
         // Verifica se o arquivo é lido corretamente
         InputStream defConfigStream = this.getResource("bosses.yml");
-        if (defConfigStream != null) {
+        if (defConfigStream != null)
+        {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
             bossesConfig.setDefaults(defConfig);
         }
@@ -140,10 +142,13 @@ public final class Main extends JavaPlugin {
 
     // Método para salvar a configuração dos bosses
     public void saveBossesConfig() {
-        if (bossesConfig == null || bossesConfigFile == null) {
+        if (bossesConfig == null || bossesConfigFile == null)
+        {
             return;
         }
-        try {
+
+        try
+        {
             bossesConfig.save(bossesConfigFile);
         } catch (IOException e) {
             getLogger().severe("Não foi possível salvar a configuração de bosses.yml!");
@@ -185,7 +190,8 @@ public final class Main extends JavaPlugin {
         messagesConfig = YamlConfiguration.loadConfiguration(messagesConfigFile);
 
         InputStream defConfigStream = this.getResource("messages.yml");
-        if (defConfigStream != null) {
+        if (defConfigStream != null)
+        {
             YamlConfiguration defConfig = YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream));
             messagesConfig.setDefaults(defConfig);
         }
@@ -234,11 +240,15 @@ public final class Main extends JavaPlugin {
         return activeBosses.get(name);
     }
 
-    public void removeBoss(String name) {
+    public void removeBoss(String name)
+    {
         Bosses boss = activeBosses.get(name);
-        boss.stop();
-
+        if (boss == null)
+        {
+            return;
+        }
         activeBosses.remove(name);
+        boss.stop();
     }
 
     public Map<String, Bosses> getBosses()

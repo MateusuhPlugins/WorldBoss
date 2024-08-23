@@ -5,14 +5,13 @@ import mateusu.worldboss.GUIManager;
 import mateusu.worldboss.Main;
 import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.SlimeSplitEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,8 +22,6 @@ public class Eventos implements Listener {
 
     private Main plugin;
 
-    private FileConfiguration usersConfig;
-
     private Map<String, Double> playerDamageTemp = new HashMap<>(); // Armazena o dano total causado durante os 10 segundos
     private Map<String, Double> playerDamageTotal = new HashMap<>(); // Armazena o dano total causado ao boss
     private Map<String, BukkitRunnable> activeTasks = new HashMap<>();
@@ -33,7 +30,16 @@ public class Eventos implements Listener {
 
     public Eventos(Main plugin) {
         this.plugin = plugin;
-        this.usersConfig = plugin.getUsersConfig();
+    }
+
+    private FileConfiguration getBossesConfig()
+    {
+        return plugin.getBossesConfig();
+    }
+
+    private FileConfiguration getUsersConfig()
+    {
+        return plugin.getUsersConfig();
     }
 
     @EventHandler
@@ -68,10 +74,10 @@ public class Eventos implements Listener {
                     playerDamageTotal.put(playerUUID, newTotalDamage);
 
                     // Atualiza o valor na configuração
-                    double currentConfigDamage = usersConfig.getDouble("users." + playerUUID + ".damage", 0.0);
+                    double currentConfigDamage = getUsersConfig().getDouble("users." + playerUUID + ".damage", 0.0);
                     double newConfigDamage = Math.round((currentConfigDamage + damage) * 100.0) / 100.0;
-                    usersConfig.set("users." + playerUUID + ".damage", newConfigDamage);
-                    usersConfig.set("users." + playerUUID + ".nick", p.getName());
+                    getUsersConfig().set("users." + playerUUID + ".damage", newConfigDamage);
+                    getUsersConfig().set("users." + playerUUID + ".nick", p.getName());
 
                     plugin.saveUsersConfig();
                     plugin.playerDamageMap.put(p.getUniqueId().toString(), newConfigDamage); // Atualiza o valor ao vivo no placeholder
@@ -160,8 +166,7 @@ public class Eventos implements Listener {
                         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0F, 1.0F);
 
                         // Atualiza o status do boss para "DERROTADO" na configuração
-                        FileConfiguration bossConfig = plugin.getBossesConfig(); // Obtém a configuração do boss
-                        bossConfig.set("bosses." + boss.getBossName() + ".defeated", "YES");
+                        getBossesConfig().set("bosses." + boss.getBossName() + ".defeated", "YES");
                         plugin.saveBossesConfig(); // Salva a configuração do boss
                     }
                 }
@@ -253,7 +258,8 @@ public class Eventos implements Listener {
     }
 
     // Método para lidar com respawn na entrada
-    public void respawnAtEntrance(Player player, Location entranceLocation) {
+    public void respawnAtEntrance(Player player, Location entranceLocation)
+    {
         player.teleport(entranceLocation);
         player.setHealth(player.getMaxHealth()); // Restaura a vida do jogador
 
@@ -264,9 +270,28 @@ public class Eventos implements Listener {
     @EventHandler
     public void bossSlimeDie(SlimeSplitEvent e) {
         for (Bosses boss : plugin.getBosses().values()) {
-            if (boss.getBossType() == EntityType.SLIME) {
-                if (boss.getLivingEntity() == e.getEntity()) {
-                    e.setCancelled(true);
+            if(boss.getLivingEntity() != null) {
+                if (boss.getBossType() == EntityType.SLIME) {
+                    if (boss.getLivingEntity() == e.getEntity()) {
+                        e.setCancelled(true);
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void bossCreeperExplode(EntityExplodeEvent e) {
+        for (Bosses boss : plugin.getBosses().values())
+        {
+            if(boss.getLivingEntity() != null)
+            {
+                if (boss.getLivingEntity() instanceof Creeper)
+                {
+                    if (boss.getLivingEntity() == e.getEntity())
+                    {
+                        e.setCancelled(true);
+                    }
                 }
             }
         }
