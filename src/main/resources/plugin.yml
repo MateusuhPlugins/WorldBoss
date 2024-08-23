@@ -1,0 +1,66 @@
+name: WorldBoss
+version: '${project.version}'
+main: mateusu.worldboss.Main
+api-version: '1.21'
+depend: [PlaceholderAPI]
+commands:
+  wb:
+    description: Comandos para o World Boss.
+    permission: wb.use
+
+permissions:
+  wb.use:
+    description: Permissão para usar o comando do World Boss.
+    default: op
+
+  wb.admin:
+    description: Permissão para usar todos os comandos do World Boss.
+    default: op
+
+  wb.create:
+    description: Permissão para criar um boss.
+    default: op
+
+  wb.remove:
+    description: Permissão para deletar um boss.
+    default: op
+
+  wb.setspawn:
+    description: Permissão para definir o spawn de um boss.
+    default: op
+
+  wb.setentrance:
+    description: Permissão para definir o spawn de entrada dos players em um boss.
+    default: op
+
+  wb.sethealth:
+    description: Permissão para definir a vida de um boss.
+    default: op
+
+  wb.settype:
+    description: Permissão para definir o tipo de um boss.
+    default: op
+
+  wb.settime:
+    description: Permissão para definir a hora de spawn de um boss.
+    default: op
+
+  wb.start:
+    description: Permissão para começar um boss.
+    default: op
+
+  wb.stop:
+    description: Permissão para parar o boss.
+    default: op
+
+  wb.reload:
+    description: Permissão para recarregar a config do plugin.
+    default: op
+
+  wb.list:
+    description: Permissão para listar os bosses.
+    default: op
+
+  wb.opengui:
+    description: Permissão para abrir o GUI de bosses.
+    default: op

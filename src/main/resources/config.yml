@@ -1,0 +1,21 @@
+# config.yml
+configs:
+  global-message-warning: #Mensagem global anunciando que o Boss nasceu
+    enabled: true
+rewards:
+  damage-based-rewards: #Recompensas por dano após o Boss eliminar o player, Exemplo: 100 será >=100, mas ao bater 500, não receberá a recompensa dos 100.
+    "100": "10 DIAMOND, 5 IRON_INGOT"
+    "500": "20 GOLD_INGOT, 10 EMERALD"
+    "1000": "10 DIAMOND, 5 IRON_INGOT, 1000 MONEY"  # Exemplo de recompensa com dinheiro
+  top:
+    1: "10 STICK"
+    2: "9 STICK"
+    3: "8 STICK"
+    4: "7 STICK"
+    5: "6 STICK"
+    6: "5 STICK"
+    7: "4 STICK"
+    8: "3 STICK"
+    9: "2 STICK"
+    10: "1 STICK"
+  lastHit: "64 DIAMOND, 25 COAL"
